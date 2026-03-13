@@ -1,0 +1,63 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct Node {
+    char ch;
+    int count;
+    struct Node *next;
+} Node;
+
+int main() {
+    FILE *file = fopen(__FILE__,"r");
+    if (file == NULL) return 1;
+    
+    Node *head=NULL;
+    int c;
+  
+    while((c = fgetc(file)) != EOF) {
+        char curChar = (char)c;
+        
+        Node* current=head;
+        Node* previous=NULL;
+        int found = 0;
+      
+        while(current != NULL) {
+            if(current->ch == curChar) {
+                current->count++;
+                found=1;
+                break;
+            }
+            previous=current;
+            current=current->next;
+        }
+     
+        if(found==0) {
+            Node* newNode = (Node*)malloc(sizeof(Node));
+            newNode->ch = curChar;
+            newNode->count = 1;
+            newNode->next = NULL;
+            
+            if(head==NULL) {
+                head = newNode;
+            }
+            else {
+                previous->next = newNode;
+            }
+        }
+    }
+    fclose(file);
+  
+    Node* printNode = head;
+    while(printNode!=NULL) {
+        printf("%c, ",printNode->ch);
+        printNode=printNode->next;
+    }
+    
+    Node* freeNode = head;
+    while(freeNode!=NULL) {
+        Node* temp = freeNode;
+        freeNode = freeNode->next;
+        free(temp);
+    }
+}
